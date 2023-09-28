@@ -38,15 +38,15 @@ const Meaning = ({partOfSpeech, definition}) => {
   <>
       <div>
         <span className="font-semibold text-yellow-600 dark:text-yellow-500"><i>{partOfSpeech}</i></span>
-          <p className="text-[12px] tracking-wide">
+          <div className="text-[12px] tracking-wide">
           {definition.map((datum, key) => {return ( <><span className="flex items-center"><p key={key} className="my-2">{datum.definition}</p></span></>)})}
-          </p>
+          </div>
       </div>
   </>)
 }
 
 export default function Home() {
-  const [search, setsearch] = useState("boy");
+  const [search, setsearch] = useState("");
   const [word, setword] = useState("");
   const [phonetic, setphonetic] = useState("");
   const [meanings, setmeanings] = useState([]);
@@ -69,7 +69,7 @@ export default function Home() {
   return (
     <>
       <section className='relative w-screen h-screen'>
-        <div className='absolute z-20 w-full h-full dark:bg-black/80 bg-white/25 backdrop-blur-xl'></div>
+        <div className='absolute z-20 w-full h-full dark:bg-blue-950/90 bg-white/25 backdrop-blur-xl'></div>
         <Image src={backgrounImage} width={0} height={0} alt='Background image' className='absolute z-0 w-full h-full ' />
         {/* Toggle button */}
         <div className="absolute z-30 flex items-center justify-center w-full h-full">
@@ -109,6 +109,7 @@ export default function Home() {
                 }
              </div>
               <div className="h-[70%] overflow-y-scroll py-3">
+              <p className="text-[12px] font-semibold">Definition(s):</p>
               {
                 meanings.map((datum, key) => <Meaning key={key} partOfSpeech={datum.partOfSpeech} definition={datum.definitions} />)
               }
