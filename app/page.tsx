@@ -10,7 +10,7 @@ import {AiOutlineStar} from 'react-icons/ai'
 import {FiSearch} from "react-icons/fi"
 import {RxSpeakerLoud} from "react-icons/rx"
 
-export const ThemeSwitcher = () => {
+const ThemeSwitcher = () => {
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
 
