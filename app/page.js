@@ -126,7 +126,7 @@ export default function Home() {
     <>
       <section className='relative w-screen h-screen'>
 
-        <div onClick={favVisibility} className=""  className="`w-fit absolute right-5 bottom-4 sm:bottom-2 p-2 rounded-md sm:text-4xl text-xl hover:scale-110 active:scale-100 duration-200 bg-slate-200 dark:bg-[#212933] z-50 flex items-center">
+        <div onClick={favVisibility}  className="`w-fit absolute right-5 bottom-4 sm:bottom-2 p-2 rounded-md sm:text-4xl text-xl hover:scale-110 active:scale-100 duration-200 bg-slate-200 dark:bg-[#212933] z-50 flex items-center">
          <div className="relative flex items-center w-full h-full">
             <button ><AiOutlineStar /></button>
             <span className="absolute text-sm flex items-center justify-center rounded-full  -top-2 dark:bg-gray-700 w-[20px] h-[20px] bg-white -left-3">{favWords.length}</span>
