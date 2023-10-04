@@ -126,14 +126,14 @@ export default function Home() {
     <>
       <section className='relative w-screen h-screen'>
 
-        <div onClick={favVisibility}  className="`w-fit absolute right-5 bottom-4 sm:bottom-2 p-2 rounded-md sm:text-4xl text-xl hover:scale-110 active:scale-100 duration-200 bg-slate-200 dark:bg-[#212933] z-50 flex items-center">
+        <div onClick={favVisibility}  className="`w-fit absolute right-5 bottom-10 sm:bottom-2 p-2 rounded-md sm:text-4xl text-xl hover:scale-110 active:scale-100 duration-200 bg-slate-200 dark:bg-[#212933] z-50 flex items-center">
          <div className="relative flex items-center w-full h-full">
             <button ><AiOutlineStar /></button>
             <span className="absolute text-sm flex items-center justify-center rounded-full  -top-2 dark:bg-gray-700 w-[20px] h-[20px] bg-white -left-3">{favWords.length}</span>
          </div>
         </div>
         
-        <div className={`absolute ${visibility} right-0 z-40 px-5 py-4 text-sm bottom-16 dark:bg-slate-100/75 bg-gray-700/75 dark:text-black  text-white rounded-l-2xl`}>
+        <div className={`absolute ${visibility} right-0 z-40 px-5 py-4 text-sm sm:bottom-16 bottom-20 dark:bg-slate-100/75 bg-gray-700/75 dark:text-black  text-white rounded-l-2xl`}>
           <h1 className="text-lg font-semibold">Favourite word(s)</h1>
           {favWords.map((word,i) => <p key={i} className="my-3 font-semibold">{i + 1}. {word}</p>)}
         </div>
