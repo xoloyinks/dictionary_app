@@ -1,6 +1,7 @@
 "use client"
-import { useState, useEffect, useRef, use } from "react";
+import { useState, useEffect, useRef, use, Suspense } from "react";
 import { useTheme } from "next-themes";
+import { setCookie, getCookie } from "cookies-next";
 import Image from 'next/image'
 import backgrounImage from "./images/24973054-seamless-pattern-design-with-hebrew-letters-and-judaic-icons.jpg";
 
@@ -61,6 +62,7 @@ export default function Home() {
   const [active, setActive] = useState(true);
   const [favourite, setFavourite] = useState(false);
   const [favWords, setFavWords] = useState([]);
+  const [visibility, setVisibility] = useState("hidden");
 
   let audioTrack = useRef();
 
@@ -91,29 +93,51 @@ export default function Home() {
       setmeanings(data[0].meanings);
       setPronounciation(data[0].phonetics[0].audio)
       setSynonyms(data[0].meanings[0].synonyms);
+      if(favWords.includes(data[0].word)){
+        setFavourite(true)
+      }else{
+        setFavourite(false)
+
+      }
     }    
   }  
 
-  const filterArray = (eachWord) => {
-      return eachWord !== word;
-  }
-  const favFunction = (word) => {
+  const toggleFavorite = (word) => {
+    if(!favourite){
+      setFavWords([...favWords, word]);
+      setCookie('FavouriteArray', favWords);
+    }else{
+      setFavWords(favWords.filter(data => data !== word));
+      setCookie('FavouriteArray', favWords);
+    }
     setFavourite(!favourite);
-      if(favourite){
-          setFavWords([...favWords, word]);
-          console.log(favWords)
-      }else{
-        const updatedArray = favWords.filter(filterArray);
-        setFavWords(updatedArray);
-        console.log(favWords)
-      }
+    const favArray = getCookie('FavouriteArray');
   }
+  
+  const favVisibility = () => {
+    if(visibility === "hidden"){
+      setVisibility("block");
+    }else{
+      setVisibility("hidden");
+    }
 
-
-
+  }
   return (
     <>
       <section className='relative w-screen h-screen'>
+
+        <div onClick={favVisibility} className=""  className="`w-fit absolute right-5 bottom-4 sm:bottom-2 p-2 rounded-md sm:text-4xl text-xl hover:scale-110 active:scale-100 duration-200 bg-slate-200 dark:bg-[#212933] z-50 flex items-center">
+         <div className="relative flex items-center w-full h-full">
+            <button ><AiOutlineStar /></button>
+            <span className="absolute text-sm flex items-center justify-center rounded-full  -top-2 dark:bg-gray-700 w-[20px] h-[20px] bg-white -left-3">{favWords.length}</span>
+         </div>
+        </div>
+        
+        <div className={`absolute ${visibility} right-0 z-40 px-5 py-4 text-sm bottom-16 dark:bg-slate-100/75 bg-gray-700/75 dark:text-black  text-white rounded-l-2xl`}>
+          <h1 className="text-lg font-semibold">Favourite word(s)</h1>
+          {favWords.map((word,i) => <p key={i} className="my-3 font-semibold">{i + 1}. {word}</p>)}
+        </div>
+
         <div className='absolute z-20 w-full h-full dark:bg-blue-950/90 bg-white/25 backdrop-blur-xl'></div>
         <Image src={backgrounImage} width={0} height={0} alt='Background image' className='absolute z-0 w-full h-full ' />
         {/* Toggle button */}
@@ -146,7 +170,7 @@ export default function Home() {
               </div>
               <div className="flex items-center justify-between py-3 my-3 border-y-2 border-black/25 dark:border-white/25">
                 <span className="font-semibold "> <i>pronounced:</i> {phonetic} </span>
-                <button onClick={() => favFunction(word)}  className="text-2xl">{!favourite ? <AiOutlineStar /> : <AiTwotoneStar className="text-yellow-500" /> }</button>
+                <button onClick={() => toggleFavorite(word)}  className="text-2xl">{favourite ? <AiTwotoneStar className="text-yellow-500" /> : <AiOutlineStar />}</button>
               </div>
              <div className="text-[12px] font-bold dark:font-semibold mb-3" >
               <span><i>synonyms: </i></span>
@@ -156,9 +180,11 @@ export default function Home() {
              </div>
               <div className="h-[70%] overflow-y-scroll py-3">
               <p className="text-[12px] font-semibold">Definition(s):</p>
-              {
-                meanings.map((datum, key) => <Meaning key={key} partOfSpeech={datum.partOfSpeech} definitions={datum.definitions} />)
-              }
+              <Suspense fallback="Loading.." >
+                {
+                  meanings.map((datum, key) => <Meaning key={key} partOfSpeech={datum.partOfSpeech} definitions={datum.definitions} />)
+                }
+              </Suspense>
               </div>
             </div>
         </div>
