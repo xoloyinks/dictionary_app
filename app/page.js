@@ -1,14 +1,15 @@
 "use client"
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, use } from "react";
 import { useTheme } from "next-themes";
 import Image from 'next/image'
 import backgrounImage from "./images/24973054-seamless-pattern-design-with-hebrew-letters-and-judaic-icons.jpg";
 
 import {MdDarkMode,MdLightMode} from "react-icons/md"
 import {GiBookCover} from 'react-icons/gi'
-import {AiOutlineStar} from 'react-icons/ai'
+import {AiOutlineStar, AiTwotoneStar} from 'react-icons/ai'
 import {FiSearch} from "react-icons/fi"
 import {RxSpeakerLoud} from "react-icons/rx"
+import { data } from "autoprefixer";
 
 
 const ThemeSwitcher = () => {
@@ -56,6 +57,28 @@ export default function Home() {
   const [phonetic, setphonetic] = useState("");
   const [meanings, setmeanings] = useState([]);
   const [synonyms, setSynonyms] = useState([]);
+  const [pronounciation, setPronounciation] = useState("");
+  const [active, setActive] = useState(true);
+  const [favourite, setFavourite] = useState(false);
+  const [favWords, setFavWords] = useState([]);
+
+  let audioTrack = useRef();
+
+  const playPronounciation = () => {
+    if (audioTrack.current) {
+      audioTrack.current.play()
+    }else{
+      console.log("No pronounciation")
+    }
+  }
+
+  useEffect(() => {
+    if(pronounciation){
+      setActive(false)
+    }else{
+      setActive(true)
+    }
+  }, [pronounciation])
 
   const handleSearch = async(e) => {
     e.preventDefault();
@@ -66,11 +89,28 @@ export default function Home() {
       setword(data[0].word);
       setphonetic(data[0].phonetic);
       setmeanings(data[0].meanings);
+      setPronounciation(data[0].phonetics[0].audio)
       setSynonyms(data[0].meanings[0].synonyms);
-    }
-    
+    }    
+  }  
+
+  const filterArray = (eachWord) => {
+      return eachWord !== word;
   }
-  
+  const favFunction = (word) => {
+    setFavourite(!favourite);
+      if(favourite){
+          setFavWords([...favWords, word]);
+          console.log(favWords)
+      }else{
+        const updatedArray = favWords.filter(filterArray);
+        setFavWords(updatedArray);
+        console.log(favWords)
+      }
+  }
+
+
+
   return (
     <>
       <section className='relative w-screen h-screen'>
@@ -101,11 +141,12 @@ export default function Home() {
               {/* WORD */}
               <div className="flex items-center justify-between text-4xl font-bold">
                <span>{word}</span>
-               <span className="text-2xl font-semibold cursor-pointer"><RxSpeakerLoud /></span>
+               <audio ref={audioTrack} src={pronounciation} />
+               <button disabled={active}  onClick={playPronounciation} className="text-2xl font-semibold"><RxSpeakerLoud /></button>
               </div>
               <div className="flex items-center justify-between py-3 my-3 border-y-2 border-black/25 dark:border-white/25">
                 <span className="font-semibold "> <i>pronounced:</i> {phonetic} </span>
-                <button className="text-2xl"><AiOutlineStar/></button>
+                <button onClick={() => favFunction(word)}  className="text-2xl">{!favourite ? <AiOutlineStar /> : <AiTwotoneStar className="text-yellow-500" /> }</button>
               </div>
              <div className="text-[12px] font-bold dark:font-semibold mb-3" >
               <span><i>synonyms: </i></span>
@@ -118,8 +159,6 @@ export default function Home() {
               {
                 meanings.map((datum, key) => <Meaning key={key} partOfSpeech={datum.partOfSpeech} definitions={datum.definitions} />)
               }
-
-            
               </div>
             </div>
         </div>
